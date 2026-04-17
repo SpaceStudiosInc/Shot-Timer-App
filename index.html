@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#090c0f">
+  <title>DRY FIRE TIMER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="beep-flash" id="beepFlash"></div>
+
+  <div class="app">
+
+    <!-- ── HEADER ── -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-pulse"></span>
+        <span class="brand-name">DRY FIRE</span>
+      </div>
+      <div class="header-active" id="hdrDrill">NO DRILL SELECTED</div>
+    </header>
+
+    <!-- ── VIEWS ── -->
+    <main class="app-main">
+
+      <!-- RUN -->
+      <section class="view active" id="viewRun">
+        <div class="run-layout">
+
+          <div class="timer-stage">
+            <div class="t-status-lbl" id="tStatus">READY</div>
+            <div class="timer-ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 220 220">
+                <circle class="ring-track" cx="110" cy="110" r="96"/>
+                <circle class="ring-par" id="parRing" cx="110" cy="110" r="96"
+                  stroke-dasharray="603.2" stroke-dashoffset="603.2"/>
+              </svg>
+              <div class="timer-center">
+                <div class="t-display" id="tBig">0.0</div>
+                <div class="t-unit-lbl">SEC</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-area">
+            <div class="no-drill-panel" id="noDrillMsg">
+              <div class="ndp-icon">◎</div>
+              <div class="ndp-title">SELECT A DRILL</div>
+              <div class="ndp-sub">DRILLS TAB BELOW</div>
+            </div>
+
+            <div class="active-step-panel" id="activePanel" style="display:none">
+              <div class="step-dots" id="stepDots"></div>
+              <div class="cur-step-card">
+                <span class="type-badge" id="curBadge">START</span>
+                <span class="step-label" id="curName">—</span>
+              </div>
+              <div class="next-step-row" id="nextRow" style="display:none">
+                <span class="next-lbl">NEXT</span>
+                <span class="type-badge sm" id="nextBadge">END</span>
+                <span class="next-name" id="nextName">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="run-footer">
+            <div class="run-hint" id="runHint"></div>
+            <button class="big-btn go" id="mainBtn" onclick="handleMainBtn()">
+              <span id="mainBtnTxt">START</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- DRILLS -->
+      <section class="view" id="viewDrills">
+        <div class="list-layout">
+          <div class="list-header">
+            <span class="view-eyebrow">DRILL LIBRARY</span>
+            <button class="round-add-btn" onclick="createNewDrill()" title="New Drill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+          </div>
+          <div id="drillList"></div>
+        </div>
+      </section>
+
+      <!-- BUILD -->
+      <section class="view" id="viewBuild">
+        <div class="build-layout" id="buildLayout">
+          <div class="build-empty" id="buildEmpty">
+            <div class="ndp-icon">⊕</div>
+            <div class="ndp-title">NO DRILL TO EDIT</div>
+            <button class="outline-btn amber" onclick="createNewDrill()" style="margin-top:18px">
+              + NEW DRILL
+            </button>
+          </div>
+          <div id="buildForm" style="display:none"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ── TAB BAR ── -->
+    <nav class="tab-bar">
+      <button class="tab" id="tab-run" onclick="switchTab('run')">
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+        </svg>
+        <span class="tab-lbl">RUN</span>
+      </button>
+      <button class="tab" id="tab-drills" onclick="switchTab('drills')">
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <span class="tab-lbl">DRILLS</span>
+      </button>
+      <button class="tab" id="tab-build" onclick="switchTab('build')">
+        <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+        <span class="tab-lbl">BUILD</span>
+      </button>
+    </nav>
+
+  </div><!-- .app -->
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
